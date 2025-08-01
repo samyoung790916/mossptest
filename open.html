@@ -3,9 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <title>앱 실행 테스트</title>
+    <style>
+      #hiddenFrame {
+        display: none;
+      }
+    </style>
     <script>
       function openAppOrStore() {
-        const schemeUrl = "mosp://"; // 앱 커스텀 스킴
+        const schemeUrl = "mosp://";
         const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
         const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
 
@@ -20,21 +25,20 @@
         }
 
         let fallbackExecuted = false;
+
         const fallbackTimer = setTimeout(() => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
             window.location.href = storeUrl;
           }
-        }, 2000);
+        }, 1500);
 
-        // 사용자 클릭 기반으로 <a> 태그 생성 및 클릭
-        const a = document.createElement("a");
-        a.href = schemeUrl;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
+        // iframe을 통한 앱 실행 시도 (경고 방지)
+        const iframe = document.createElement("iframe");
+        iframe.id = "hiddenFrame";
+        iframe.src = schemeUrl;
+        document.body.appendChild(iframe);
 
-        // 백그라운드 진입 시 fallback 취소
         const cancelFallback = () => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
@@ -42,9 +46,11 @@
           }
         };
 
+        // 앱이 실행되면 페이지가 숨겨지거나 백그라운드로 가므로 fallback 취소
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden") cancelFallback();
         });
+
         window.addEventListener("blur", cancelFallback);
         window.addEventListener("pagehide", cancelFallback);
       }
@@ -52,7 +58,7 @@
   </head>
   <body>
     <h2>앱 실행 테스트</h2>
-    <p>앱이 설치되어 있다면 실행되고, 설치되어 있지 않다면 앱스토어로 이동합니다.</p>
+    <p>앱이 설치되어 있으면 실행되고, 설치되어 있지 않으면 스토어로 이동합니다.</p>
     <button onclick="openAppOrStore()">앱 실행하기</button>
   </body>
 </html>
