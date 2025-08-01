@@ -3,11 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <title>앱 실행 테스트</title>
-    <style>
-      #hiddenFrame {
-        display: none;
-      }
-    </style>
     <script>
       function openAppOrStore() {
         const schemeUrl = "mosp://";
@@ -33,11 +28,11 @@
           }
         }, 1500);
 
-        // iframe을 통한 앱 실행 시도 (경고 방지)
-        const iframe = document.createElement("iframe");
-        iframe.id = "hiddenFrame";
-        iframe.src = schemeUrl;
-        document.body.appendChild(iframe);
+        // Safari에서 iframe 무시되는 문제 대응 → location 직접 변경
+        // setTimeout 안에서 실행해야 브라우저가 block 하지 않음
+        setTimeout(() => {
+          window.location.href = schemeUrl;
+        }, 100);
 
         const cancelFallback = () => {
           if (!fallbackExecuted) {
@@ -46,11 +41,9 @@
           }
         };
 
-        // 앱이 실행되면 페이지가 숨겨지거나 백그라운드로 가므로 fallback 취소
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden") cancelFallback();
         });
-
         window.addEventListener("blur", cancelFallback);
         window.addEventListener("pagehide", cancelFallback);
       }
@@ -58,7 +51,7 @@
   </head>
   <body>
     <h2>앱 실행 테스트</h2>
-    <p>앱이 설치되어 있으면 실행되고, 설치되어 있지 않으면 스토어로 이동합니다.</p>
+    <p>앱이 설치되어 있으면 실행되고, 없으면 스토어로 이동합니다.</p>
     <button onclick="openAppOrStore()">앱 실행하기</button>
   </body>
 </html>
