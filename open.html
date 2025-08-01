@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>앱 실행 테스트</title>
+    <script>
+      function openAppOrStore() {
+        const universalLink = "https://dev-frontuser.mossp.co.kr";
+        const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
+        const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
+
+        // 간단한 브라우저 디텍션 (대체용)
+        const userAgent = navigator.userAgent.toLowerCase();
+        const isAndroid = userAgent.includes("android");
+        const isIOS = /iphone|ipad|ipod/.test(userAgent);
+
+        const storeUrl = isAndroid ? androidStoreUrl : isIOS ? iosStoreUrl : null;
+        if (!storeUrl) {
+          alert("모바일 기기에서만 지원됩니다.");
+          return;
+        }
+
+        const now = Date.now();
+
+        const a = document.createElement("a");
+        a.href = universalLink;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+          const elapsed = Date.now() - now;
+          if (elapsed < 2000) {
+            window.location.href = storeUrl;
+          }
+        }, 1500);
+
+        document.body.removeChild(a);
+      }
+    </script>
+  </head>
+  <body>
+    <p>
+      <a href="https://dev-frontuser.mossp.co.kr">직접 링크로 이동</a>
+    </p>
+    <p>
+      <button onclick="openAppOrStore()">앱에서 보기 (앱 없으면 스토어로)</button>
+    </p>
+  </body>
+</html>
