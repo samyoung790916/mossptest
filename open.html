@@ -5,7 +5,7 @@
     <title>앱 실행 테스트</title>
     <script>
       function openAppOrStore() {
-        const universalLink = "https://dev-frontuser.mossp.co.kr"; // 앱에 연결된 유니버설 링크
+        const schemeUrl = "mosp://";
         const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
         const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
 
@@ -19,20 +19,34 @@
           return;
         }
 
-        // 앱 실행 시도 → 실패 시 스토어 이동
+        let fallbackExecuted = false;
+
+        // fallback timer
         const fallbackTimer = setTimeout(() => {
-          window.location.href = storeUrl;
+          if (!fallbackExecuted) {
+            fallbackExecuted = true;
+            window.location.href = storeUrl;
+          }
         }, 2000);
 
-        // 앱 실행
-        window.location.href = 'mosp://';
+        // 앱 실행 시도
+        window.location.href = schemeUrl;
 
-        // 앱이 실제로 실행된 경우: 브라우저가 백그라운드로 가며 visibilitychange 발생
-        document.addEventListener("visibilitychange", () => {
-          if (document.visibilityState === "hidden") {
-            clearTimeout(fallbackTimer); // 앱이 실행되었으므로 스토어 이동 취소
+        // 앱 실행 시 브라우저 비활성화 감지 → fallback 취소
+        function cancelFallback() {
+          if (!fallbackExecuted) {
+            fallbackExecuted = true;
+            clearTimeout(fallbackTimer);
           }
+        }
+
+        // 여러 이벤트로 감지 보완
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "hidden") cancelFallback();
         });
+
+        window.addEventListener("blur", cancelFallback); // 백그라운드 감지
+        window.addEventListener("pagehide", cancelFallback); // 페이지 사라짐 감지
       }
     </script>
   </head>
