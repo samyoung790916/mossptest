@@ -5,7 +5,7 @@
     <title>앱 실행 테스트</title>
     <script>
       function openAppOrStore() {
-        const schemeUrl = "mosp://";
+        const schemeUrl = "mosp://"; // 앱 커스텀 스킴
         const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
         const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
 
@@ -20,8 +20,6 @@
         }
 
         let fallbackExecuted = false;
-
-        // fallback timer
         const fallbackTimer = setTimeout(() => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
@@ -29,30 +27,32 @@
           }
         }, 2000);
 
-        // 앱 실행 시도
-        window.location.href = schemeUrl;
+        // 사용자 클릭 기반으로 <a> 태그 생성 및 클릭
+        const a = document.createElement("a");
+        a.href = schemeUrl;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
 
-        // 앱 실행 시 브라우저 비활성화 감지 → fallback 취소
-        function cancelFallback() {
+        // 백그라운드 진입 시 fallback 취소
+        const cancelFallback = () => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
             clearTimeout(fallbackTimer);
           }
-        }
+        };
 
-        // 여러 이벤트로 감지 보완
         document.addEventListener("visibilitychange", () => {
           if (document.visibilityState === "hidden") cancelFallback();
         });
-
-        window.addEventListener("blur", cancelFallback); // 백그라운드 감지
-        window.addEventListener("pagehide", cancelFallback); // 페이지 사라짐 감지
+        window.addEventListener("blur", cancelFallback);
+        window.addEventListener("pagehide", cancelFallback);
       }
     </script>
   </head>
   <body>
     <h2>앱 실행 테스트</h2>
-    <p>앱이 설치되어 있다면 실행되고, 설치되어 있지 않다면 스토어로 이동합니다.</p>
+    <p>앱이 설치되어 있다면 실행되고, 설치되어 있지 않다면 앱스토어로 이동합니다.</p>
     <button onclick="openAppOrStore()">앱 실행하기</button>
   </body>
 </html>
