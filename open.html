@@ -5,7 +5,7 @@
     <title>앱 실행 테스트 (Universal Link)</title>
     <script>
       function openUniversalLink() {
-        const universalLink = "https://dev-frontuser.mossp.co.kr/open"; // 유니버설 링크 (앱에 매핑된 도메인)
+        const universalLink = "https://dev-frontuser.mossp.co.kr"; // 유니버설 링크 (앱에 매핑된 도메인)
         const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
         const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
 
@@ -19,37 +19,32 @@
           return;
         }
 
-        let fallbackExecuted = false;
+        // let fallbackExecuted = false;
 
-        const timeout = setTimeout(() => {
-          if (!fallbackExecuted) {
-            fallbackExecuted = true;
-            window.location.href = storeUrl;
-          }
-        }, 2000);
+        // const timeout = setTimeout(() => {
+        //   if (!fallbackExecuted) {
+        //     fallbackExecuted = true;
+        //     window.location.href = storeUrl;
+        //   }
+        // }, 2000);
 
         // 유니버설 링크 실행
-        const a = document.createElement("a");
-        a.href = universalLink;
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        window.location.href = universalLink;
 
-        // 앱 전환 감지
-        const cancelFallback = () => {
-          if (!fallbackExecuted) {
-            fallbackExecuted = true;
-            clearTimeout(timeout);
-          }
-        };
+        // // 앱 전환 감지 시 fallback 취소
+        // const cancelFallback = () => {
+        //   if (!fallbackExecuted) {
+        //     fallbackExecuted = true;
+        //     clearTimeout(timeout);
+        //   }
+        // };
 
-        document.addEventListener("visibilitychange", () => {
-          if (document.visibilityState === "hidden") cancelFallback();
-        });
+        // document.addEventListener("visibilitychange", () => {
+        //   if (document.visibilityState === "hidden") cancelFallback();
+        // });
 
-        window.addEventListener("blur", cancelFallback);
-        window.addEventListener("pagehide", cancelFallback);
+        // window.addEventListener("blur", cancelFallback);
+        // window.addEventListener("pagehide", cancelFallback);
       }
     </script>
   </head>
