@@ -9,35 +9,28 @@
         const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
         const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
 
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isAndroid = userAgent.includes("android");
-        const isIOS = /iphone|ipad|ipod/.test(userAgent);
+        const ua = navigator.userAgent.toLowerCase();
+        const isAndroid = ua.includes("android");
+        const isIOS = /iphone|ipad|ipod/.test(ua);
         const storeUrl = isAndroid ? androidStoreUrl : isIOS ? iosStoreUrl : null;
 
         if (!storeUrl) {
-          alert("이 기능은 모바일 기기에서만 사용할 수 있습니다.");
+          alert("이 기능은 모바일 기기에서만 사용 가능합니다.");
           return;
         }
 
         let fallbackExecuted = false;
-
-        const fallbackTimer = setTimeout(() => {
+        const timeout = setTimeout(() => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
             window.location.href = storeUrl;
           }
         }, 1500);
 
-        // Safari에서 iframe 무시되는 문제 대응 → location 직접 변경
-        // setTimeout 안에서 실행해야 브라우저가 block 하지 않음
-        setTimeout(() => {
-          window.location.href = schemeUrl;
-        }, 100);
-
         const cancelFallback = () => {
           if (!fallbackExecuted) {
             fallbackExecuted = true;
-            clearTimeout(fallbackTimer);
+            clearTimeout(timeout);
           }
         };
 
@@ -46,12 +39,20 @@
         });
         window.addEventListener("blur", cancelFallback);
         window.addEventListener("pagehide", cancelFallback);
+
+        // ✅ 커스텀 스킴 실행을 위한 안전한 방법
+        const a = document.createElement("a");
+        a.href = schemeUrl;
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a); // 깔끔하게 제거
       }
     </script>
   </head>
   <body>
     <h2>앱 실행 테스트</h2>
-    <p>앱이 설치되어 있으면 실행되고, 없으면 스토어로 이동합니다.</p>
+    <p>앱이 설치되어 있으면 실행되고, 없으면 앱스토어로 이동합니다.</p>
     <button onclick="openAppOrStore()">앱 실행하기</button>
   </body>
 </html>
