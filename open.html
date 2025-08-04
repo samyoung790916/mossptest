@@ -3,21 +3,55 @@
   <head>
     <meta charset="UTF-8" />
     <title>앱 실행 테스트 (Universal Link)</title>
-    <style>
-      .launch-button {
-        display: inline-block;
-        padding: 12px 24px;
-        font-size: 16px;
-        background-color: #007bff;
-        color: white;
-        border-radius: 6px;
-        text-decoration: none;
+    <script>
+      function openUniversalLink() {
+        const universalLink = "https://dev-frontuser.mossp.co.kr/open"; // 유니버설 링크 (앱에 매핑된 도메인)
+        const iosStoreUrl = "https://apps.apple.com/app/id1518550286";
+        const androidStoreUrl = "market://details?id=com.mmaa.narasarangapp";
+
+        const ua = navigator.userAgent.toLowerCase();
+        const isAndroid = ua.includes("android");
+        const isIOS = /iphone|ipad|ipod/.test(ua);
+        const storeUrl = isAndroid ? androidStoreUrl : isIOS ? iosStoreUrl : null;
+
+        if (!storeUrl) {
+          alert("이 기능은 모바일 기기에서만 지원됩니다.");
+          return;
+        }
+
+        // let fallbackExecuted = false;
+
+        // const timeout = setTimeout(() => {
+        //   if (!fallbackExecuted) {
+        //     fallbackExecuted = true;
+        //     window.location.href = storeUrl;
+        //   }
+        // }, 2000);
+
+        // 유니버설 링크 실행
+        window.location.href = universalLink;
+
+        // // 앱 전환 감지 시 fallback 취소
+        // const cancelFallback = () => {
+        //   if (!fallbackExecuted) {
+        //     fallbackExecuted = true;
+        //     clearTimeout(timeout);
+        //   }
+        // };
+
+        // document.addEventListener("visibilitychange", () => {
+        //   if (document.visibilityState === "hidden") cancelFallback();
+        // });
+
+        // window.addEventListener("blur", cancelFallback);
+        // window.addEventListener("pagehide", cancelFallback);
       }
-    </style>
+    </script>
   </head>
   <body>
     <h2>앱 실행 테스트 (유니버설 링크)</h2>
-    <p>앱이 설치되어 있으면 앱이 실행되고, 없으면 웹으로 열릴 수 있습니다.</p>
-    <a href="https://dev-frontuser.mossp.co.kr/open">앱 열기</a>
+    <p>앱이 설치되어 있으면 앱이 실행되고, 없으면 스토어로 이동합니다.</p>
+    <button onclick="openUniversalLink()">앱 실행하기</button>
+    
   </body>
 </html>
